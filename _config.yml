@@ -3,9 +3,9 @@
 # Site wide configuration
 ####################################
 #
-title: Leonids
+title: aimless agents
 email:
-description: A simple and awesome blog theme powered by jekyll.
+description: just 2 agents looking to learn
 url: # the base hostname & protocol for your site
 keywords: ["blog", "jekyll"]
 
@@ -33,10 +33,10 @@ kramdown:
 ####################################
 #
 owner:
-  name: Leonids
+  name: "aimless agents"
   avatar: leonids-logo.png
-  job: "A jekyll theme"
-  bio: "A simple and awesome blog theme powered by jekyll."
+  job: "just 2 agents looking to learn"
+  bio: "A casual blog brought to you by 2 ML students/enthusiasts."
   email:
   disqus-shortname:
   twitter: #username
