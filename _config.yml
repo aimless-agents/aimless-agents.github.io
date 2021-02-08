@@ -6,7 +6,8 @@
 title: aimless agents
 email:
 description: just 2 agents looking to learn
-url: # the base hostname & protocol for your site
+url: https://aimless-agents.github.io
+baseurl: ""
 keywords: ["blog", "jekyll"]
 
 #
@@ -49,23 +50,14 @@ owner:
     ad-slot:
   bing-verify:
   github: aimless-agents
-  gitlab: #username
   stackoverflow: #123456/username   from a "http://stackoverflow.com/users/123456/username" link
   linkedin: #username
-  skype: #username
-  xing: #username
   instagram: #username
-  lastfm: #username
-  tumblr: #username
-  pinterest: #username
-  foursquare: #username
-  steam: #username
-  dribbble: #username
-  youtube: #username
-  soundcloud: #username
-  weibo: #username
-  flickr: #username
-  500px: #username
-  codepen: #username
-  reddit: #username
-  telegram: #username
+
+# Google Analytics
+google_analytics: G-E2VY99JNJM
+
+plugins:
+  - jekyll-feed
+  - jekyll-sitemap
+  - jekyll-seo-tag
