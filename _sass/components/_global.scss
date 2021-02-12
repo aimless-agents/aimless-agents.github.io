@@ -174,5 +174,12 @@ footer {
 }
 
 table {
-  
+  width: auto;
+  margin: 0 auto;
+}
+
+td, th {
+  text-align: center;
+  border: 1px solid black;
+  padding: 10px 10px;
 }
