@@ -29,21 +29,49 @@ a:link {
   border:5px solid $table-border-color;
 }
 
+// mobile view
 @media screen and ( max-width: 800px) {
     .image { 
         text-align: center;
-    width: 100%;
-    height: auto;
-    display:block;
-    object-fit: cover;
+        width: 100%;
+        height: auto;
+        display:block;
+        object-fit: cover;
+    }
+
+    img.align-self {
+        align-self: center;
+    }
+
+    .image-row {
+        justify-content: center!important;
+        display: flex !important; 
+        margin-left: auto;
+        margin-right: auto;
+        height: auto;
     }
 }
-.image {
-    text-align: center;
-    width: 100%;
-    height: auto;
-    display: block;
-    object-fit: cover;
+
+// desktop view
+@media screen and ( min-width: 801px) {
+    .image {
+        text-align: center;
+        width: 40%;
+        height: auto;
+        display: block;
+    }
+    
+    img.align-self {
+        align-self: center;
+    }
+
+    .image-row {
+        justify-content: center!important;
+        display: flex !important; 
+        margin-left: 100px;
+        margin-right: 100px;
+        height: auto;
+    }
 }
 
 // Tables
@@ -180,6 +208,7 @@ footer {
 
 .flex {
   display: flex !important;
+
   height: auto;
 }
 

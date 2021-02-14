@@ -1,9 +1,19 @@
 {% assign images = include.urls | split: ", " %}
 <figure class="image" style="width: 80%; margin: auto;">
-    <div class="justify-content-center flex">
+    <div class="image-row">
         {% for image in images %}
-            <img src="{{ image }}" alt="{{ include.description }}" style="max-width: {{ include.size }}%">
+            <img class="image" src="{{ image }}" alt="{{ include.description }}">
         {% endfor %}
     </div>
     <p><figcaption><i>{{ include.description }}</i></figcaption></p>
 </figure>
+
+<!-- {% assign images = include.urls | split: ", " %}
+<figure class="image" style="width: 80%; margin: auto;">
+    <div class="justify-content-center flex">
+        {% for image in images %}
+            <img src="{{ image }}" alt="{{ include.description }}">
+        {% endfor %}
+    </div>
+    <p><figcaption><i>{{ include.description }}</i></figcaption></p>
+</figure> -->
