@@ -35,9 +35,9 @@ kramdown:
 #
 owner:
   name: "aimless agents"
-  avatar: logo_pinkbrown.png
+  avatar: logo_bluegreen.png
   job: "just 2 agents looking to learn"
-  bio: "A casual blog brought to you by 2 ML students/enthusiasts."
+  bio: "A casual blog brought to you by 2 ML enthusiasts."
   email: 
   disqus-shortname: aimless-agents
   twitter: #username
