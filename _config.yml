@@ -8,7 +8,7 @@ email:
 description: just 2 agents looking to learn
 url: https://aimless-agents.github.io
 baseurl: ""
-keywords: ["blog", "jekyll"]
+keywords: ["aimless-agents", "jekyll", "blog"]
 
 #
 ###################################
@@ -35,7 +35,7 @@ kramdown:
 #
 owner:
   name: "aimless agents"
-  avatar: logo_bluegreen.png
+  avatar: logo_redblue.png
   job: "just 2 agents looking to learn"
   bio: "A casual blog brought to you by 2 ML students/enthusiasts."
   email: 

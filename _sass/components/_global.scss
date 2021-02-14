@@ -23,18 +23,27 @@ a:link {
     font-weight: bold;
 }
 
-.circular img {
+.circular img{
   border-radius:100%;
   width: 100%;
   border:5px solid $table-border-color;
 }
 
+@media screen and ( max-width: 800px) {
+    .image { 
+        text-align: center;
+    width: 100%;
+    height: auto;
+    display:block;
+    object-fit: cover;
+    }
+}
 .image {
-  text-align: center;
-  max-width: 100%;
-  height: auto;
-  display:block;
-  object-fit: cover;
+    text-align: center;
+    width: 100%;
+    height: auto;
+    display: block;
+    object-fit: cover;
 }
 
 // Tables
