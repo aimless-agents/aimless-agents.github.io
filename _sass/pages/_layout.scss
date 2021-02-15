@@ -17,6 +17,11 @@
     width: 100%;
   }
 }
+@media (prefers-color-scheme: dark) {
+  .cover {
+    background-color: $background-color-darker;
+  }
+}
 .cover-card {
   color: $text-color;
   padding: 0 30px;

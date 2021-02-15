@@ -53,9 +53,12 @@ $hr-border-width:             $border-width;
 
 $text-color:       rgba(0, 0, 0, 0.87) !default;
 $background-color: #202c59;
+$background-color-darker: #0e1014;
 
 $white:            #fff;
-$primary:          #a84b3e; 
+$gray:             #20232e;
+$primary:          #ff6363; 
+// $primary-bright:    #cf5c4c;
 $secondary:        #F0a202;
 $author_name_color:#ffffff;
 $author_bio_color: #ffffff;

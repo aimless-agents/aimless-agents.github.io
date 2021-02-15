@@ -17,6 +17,9 @@
     position: initial;
     top: 0;
   }
+  @media (prefers-color-scheme: dark) {
+    background-color: $gray;
+  }
 }
 
 .image-credit {
