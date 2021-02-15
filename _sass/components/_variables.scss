@@ -52,17 +52,18 @@ $hr-border-width:             $border-width;
 //
 
 $text-color:       rgba(0, 0, 0, 0.87) !default;
-$background-color: #124559;
+$background-color: #202c59;
 
 $white:            #fff;
-$primary:          #729775;
-$secondary:        #a9cef4;
+$primary:          #a84b3e; 
+$secondary:        #F0a202;
+$author_name_color:#ffffff;
+$author_bio_color: #ffffff;
+
 $success:          #65e892;
 $danger:           #f83e4b;
 $warning:          #F5A623;
 $info:             #09ABF6;
-$author_name_color:#fff;
-$author_bio_color: #fff;
 
 // Tables
 $table-border-color: #d0d0d0 !default;
