@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+<!-- Begin Jekyll SEO tag v2.7.1 -->
+<title>Cross Entropy and Kullback-Leibler | aimless agents</title>
+<meta name="generator" content="Jekyll v3.9.0" />
+<meta property="og:title" content="Cross Entropy and Kullback-Leibler" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="A beginner’s guide to cross entropy loss and KL divergence." />
+<meta property="og:description" content="A beginner’s guide to cross entropy loss and KL divergence." />
+<link rel="canonical" href="http://localhost:4000/articles/2021-03/cekl" />
+<meta property="og:url" content="http://localhost:4000/articles/2021-03/cekl" />
+<meta property="og:site_name" content="aimless agents" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2021-03-18T00:00:00-04:00" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="Cross Entropy and Kullback-Leibler" />
+<script type="application/ld+json">
+{"mainEntityOfPage":{"@type":"WebPage","@id":"http://localhost:4000/articles/2021-03/cekl"},"datePublished":"2021-03-18T00:00:00-04:00","url":"http://localhost:4000/articles/2021-03/cekl","@type":"BlogPosting","description":"A beginner’s guide to cross entropy loss and KL divergence.","headline":"Cross Entropy and Kullback-Leibler","dateModified":"2021-03-18T00:00:00-04:00","@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+
+    <link rel="stylesheet" href="/assets/css/style.css?v=c41bacf904699970d674c45c7836a7df21207bec">
+  </head>
+  <body>
+    <div class="container-lg px-3 my-5 markdown-body">
+      
+      <h1><a href="http://localhost:4000/">aimless agents</a></h1>
+      
+
+      <h2 id="introduction">Introduction</h2>
+
+<p>We wanted to dedicate an entire post to the lovely functions cross entropy and Kullback-Leibler divergence, which are very widely used in training ML models but not very intuitive.</p>
+
+<p>Luckily these two loss functions are intricately related, and in this post we’ll explore the intuitive ideas behind both, and compare &amp; contrast the two so you can decide which is more appropriate to use in your case. We’ve also created a short interactive demo you can play around with at the <a href="#demo">bottom of the post</a>.
+<!-- (By the way, for a more bird’s eye view of these two as well as loss function as a whole, check out our Loss Discussion post here!) --></p>
+
+<h2 id="entropy">Entropy</h2>
+
+<p>We’ll start off reviewing the concepts of <strong>information</strong> and <strong>entropy</strong>. 
+“Information” is such an overloaded word in English, but in the statistical/information-theoretic sense, information is a quantification of <strong>uncertainty</strong> in a probability distribution. To illustrate, consider the weather. The more <em>uncertain</em> or random the weather seems, the more information you gain when you learn what the weather actually is.
+Entropy is centered around this information transfer: it’s the expected amount of information, measured in bits, in some transmission of data.</p>
+<div class="justify-content-center flex">
+    <figure class="image">
+    <img src="https://media4.giphy.com/media/3otPoG6dAdT9dQfdZu/giphy.gif" alt="Unfortunately Karen provides pretty low information." />
+    <p><figcaption><i>Unfortunately Karen provides pretty low information.</i></figcaption></p>
+    
+    </figure>
+</div>
+
+<p>For example: suppose the weather can either be sunny or rainy. 
+Now suppose the true distribution of the weather is P(sunny) = ¾, P(rainy) = ¼. We could then say <code class="language-plaintext highlighter-rouge">00</code>, <code class="language-plaintext highlighter-rouge">01</code>, and <code class="language-plaintext highlighter-rouge">10</code> mean sunny, <code class="language-plaintext highlighter-rouge">11</code> means rainy. This is known as an <strong>encoding</strong>.</p>
+
+<figure class="image" style="width: 80%; margin: auto;">
+    <div class="image-row">
+        
+            
+            <div style="margin: 0 10px">
+                <i class="fa fa-sun" style="font-size: 60px; color: ;"></i>
+                <p style="font-size: 20px; margin-top: 0px">00</p>
+            </div>
+            <!-- <img class="image" src="" alt=""> -->
+        
+            
+            <div style="margin: 0 10px">
+                <i class="fa fa-sun" style="font-size: 60px; color: ;"></i>
+                <p style="font-size: 20px; margin-top: 0px">01</p>
+            </div>
+            <!-- <img class="image" src="" alt=""> -->
+        
+            
+            <div style="margin: 0 10px">
+                <i class="fa fa-sun" style="font-size: 60px; color: ;"></i>
+                <p style="font-size: 20px; margin-top: 0px">10</p>
+            </div>
+            <!-- <img class="image" src="" alt=""> -->
+        
+            
+            <div style="margin: 0 10px">
+                <i class="fa fa-cloud-showers-heavy" style="font-size: 60px; color: ;"></i>
+                <p style="font-size: 20px; margin-top: 0px">11</p>
+            </div>
+            <!-- <img class="image" src="" alt=""> -->
+        
+    </div>
+</figure>
+
+<p>As a general rule, the information (in bits) needed to encode an outcome = \(-log_2( P(outcome) )\). Why? A singular bit can take on 2 unique values; so, if you imagine all the possible weather outcomes represented in a tree, each individual bit helps split a path in the tree in two.</p>
+<div class="justify-content-center flex">
+    <figure class="image">
+    <img src="/img/ce-kl/weather_tree.png" alt="" />
+    <p><figcaption><i></i></figcaption></p>
+    
+    </figure>
+</div>
+
+<p>The more rare the outcome, the more information you’ll need to discern that event from others – hence the <strong>inverse relationship</strong> between probability and information for a given event. 
+Equivalently to the above,</p>
+
+\[P(event) = (\frac{1}{2})^{\# bits}.\]
+
+<p>To further illustrate this formula, let’s consider the 2 possible outcomes from learning what the weather is:</p>
+
+<table>
+  <tbody>
+    <tr>
+      <td>The weather station tells us it’s rainy.<br /><br /><i class="fa fa-sun sm-icon" style="color:gray;"></i> <i class="fa fa-sun sm-icon" style="color:gray"></i> <i class="fa fa-sun sm-icon" style="color:gray"></i> <i class="fa fa-cloud-showers-heavy sm-icon"></i><br /><br />We got \(-log_2(1/4)\) = 2 bits of info. The station must’ve transmitted <code class="language-plaintext highlighter-rouge">11</code>, which is precisely 2 bits long.</td>
+      <td>The weather station tells us it’s sunny.<br /><br /><i class="fa fa-sun sm-icon"></i> <i class="fa fa-sun sm-icon"></i> <i class="fa fa-sun sm-icon"></i> <i class="fa fa-cloud-showers-heavy sm-icon" style="color:gray"></i><br /><br />We got \(-log_2(3/4)\) = 0.415 bits of info. This is a bit trickier than the rainy case: <br />the station transmitted one of <code class="language-plaintext highlighter-rouge">00</code>, <code class="language-plaintext highlighter-rouge">01</code>, or <code class="language-plaintext highlighter-rouge">10</code>, which is less than 2 bits of info because we’re not certain what each bit was.</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>Now to calculate the <em>expected amount of information</em> (entropy!), we take the weighted sum of these individual amounts of information, with weights being the probability of each outcome.</p>
+
+\[Entropy(weather) = H(weather) = E[Info(weather)] = P(rainy) * Info(rainy) + P(sunny) * Info(sunny)\]
+
+\[= -0.25 * log_2(0.25) - 0.75 * log_2(0.75) = 0.811.\]
+
+<p>This tells us that given the weather follows our distribution of ¾ sunny, ¼ rainy, we’d expect that learning what the weather is for a given day (i.e., receiving the information about the weather’s value) gives us 0.811 bits’ worth of information. Or, from the other side, we expect it would take 0.811 bits to send a message saying what today’s weather was.
+This brings us to the general formula for entropy, which is defined for some probability distribution (in this case, of the weather) \(p\):</p>
+
+\[H(p) = - \sum_i p_i log_2(p_i)\]
+
+<h2 id="categorical-cross-entropy">(Categorical) Cross Entropy</h2>
+
+<p>Let’s get to the main attraction: <strong>cross entropy</strong> is the expected number of bits needed to encode data from one distribution using another. So this is where our model’s prediction of the weather comes in. Maybe we live in a temperate place, so we think P(sunny) = 9/10. With our <em>predicted</em> distribution, this would require us to encode a “sunny” outcome with \(-log_2(9/10)\) = 0.15 bits. Since the <em>actual</em> probability it’s sunny is still ¾, the expected amount of information is ¾ * 0.15. So again taking the weighted sum in this manner, the formula for cross entropy loss is</p>
+
+\[H(p, q) = - \sum_i p_i log_2(q_i)\]
+
+\[= ¾ (0.15) + ¼ (3.32)\]
+
+<p>Again, this represents the average number of bits needed to encode data from a source with distribution \(p\), using a model distribution \(q\). Why does this quantity of information/number of bits matter? Intuitively, the less accurate or further away \(q\) is from \(p\), the more bits are needed to represent \(p\).</p>
+
+<p>When training, since we don’t know the true distribution, but instead the actual classes (labels) for individual data points, we compute the CE loss between our predicted distribution and <strong>one-hot vectors</strong> for each training point. This means a distribution with probability of 1 on the true label class, and 0 for all other classes.</p>
+
+<div class="justify-content-center flex">
+    <figure class="image">
+    <img src="/img/ce-kl/one_hot.png" alt="One hot arrow with both direction and magnitude." />
+    <p><figcaption><i>One hot arrow with both direction and magnitude.</i></figcaption></p>
+    
+    </figure>
+</div>
+
+<p>For example, if our model outputted this the probability distribution</p>
+
+<figure class="image" style="width: 80%; margin: auto;">
+    <div class="image-row">
+        
+            
+            <div style="margin: 0 10px">
+                <i class="fa fa-sun" style="font-size: 35px; color: ;"></i>
+                <p style="font-size: 20px; margin-top: 0px">0.75</p>
+            </div>
+            <!-- <img class="image" src="" alt=""> -->
+        
+            
+            <div style="margin: 0 10px">
+                <i class="fa fa-cloud-showers-heavy" style="font-size: 35px; color: ;"></i>
+                <p style="font-size: 20px; margin-top: 0px">0.25</p>
+            </div>
+            <!-- <img class="image" src="" alt=""> -->
+        
+    </div>
+</figure>
+
+<p>But the correct answer was sunny, making the one-hot vector:</p>
+
+<figure class="image" style="width: 80%; margin: auto;">
+    <div class="image-row">
+        
+            
+            <div style="margin: 0 10px">
+                <i class="fa fa-sun" style="font-size: 35px; color: ;"></i>
+                <p style="font-size: 20px; margin-top: 0px">1</p>
+            </div>
+            <!-- <img class="image" src="" alt=""> -->
+        
+            
+            <div style="margin: 0 10px">
+                <i class="fa fa-cloud-showers-heavy" style="font-size: 35px; color: ;"></i>
+                <p style="font-size: 20px; margin-top: 0px">0</p>
+            </div>
+            <!-- <img class="image" src="" alt=""> -->
+        
+    </div>
+</figure>
+
+<p>Then the cross entropy loss is accordingly</p>
+
+\[- 1 * log_2(0.75) - 0 * log_2(0.25)\]
+
+<p>Had our model predicted it was sunny with probability 1, the cross entropy loss for this example would’ve been 0. <em>(Think about why!)</em></p>
+<div class="justify-content-center flex">
+    <figure class="image">
+    <img src="/img/ce-kl/always_sunny.png" alt="P(sunny) = 1 in Philadelphia!" />
+    <p><figcaption><i>P(sunny) = 1 in Philadelphia!</i></figcaption></p>
+    
+    </figure>
+</div>
+
+<p>One property of the cross entropy formula is that if you predict a class has probability of 0 when its true probability is non-zero, the cross entropy loss will be infinite/undefined. This is because \(log(x)\) approaches positive infinity as x approaches 0. 
+In practice, since we can’t backpropagate from a loss value of infinity, two solutions to this problem are</p>
+<ol>
+  <li>Clip the predicted probability values at some small \(\epsilon\) value, e.g., 1e-6, which would result in a large but at least defined value.</li>
+  <li>Clip the cross entropy loss at some large value, e.g., \(loss(p, q) = min(1000, H(p, q))\), so it never actually reaches infinity.</li>
+</ol>
+
+<p>It’s worth noting that despite being referred to as a “distance”, cross entropy is not symmetric: \(H(p, q) \ne H(q, p)\).</p>
+
+<p>Cross entropy is a great loss function to use for most <strong>multi-class classification</strong> problems. This describes problems like our weather-predicting example: you have 2+ different classes you’d like to predict, and each example only belong to <em>one</em> class.</p>
+
+<p>The cross entropy we’ve defined in this section is specifically <strong>categorical cross entropy</strong>.</p>
+
+<h3 id="binary-cross-entropy-log-loss">Binary cross-entropy (log loss)</h3>
+
+<p>For <strong>binary classification</strong> problems (when there are only 2 classes to predict) specifically, we have an alternative definition of CE loss which becomes binary CE (BCE) loss. This is commonly referred to as log loss:
+\(BCE(p, q) = - \sum_i p_i log(q_i) + (1 - p_i) log(1 - q_i)\)</p>
+
+<p>You’ll notice that this equation has a few terms extra compared to categorical cross entropy. The \(p_i log(q_i)\) term is familiar, measuring the distance between true and predicted class probability, while the \((1 - p_i) log(1 - q_i)\) is basically the exact same penalty for the other side: we know there’s exactly 2 classes, so \((1 - p_i)\) and \((1-q_i)\) are just the probabilities for the opposite class to \(p_i\) and \(q_i\), respectively.</p>
+
+<p>So when to use this instead of the categorical cross entropy loss covered above? As you may guess, this loss function is only appropriate for binary classification. Another use case would be <strong>multi-label classification</strong>, which means assigning multiple classes (“labels”) to each data point. This is essentially combining multiple binary classification tasks into one, for example, asking for a given day:</p>
+<ul>
+  <li>is it rainy or not rainy?</li>
+  <li>is it sunny or not sunny?</li>
+  <li>is it cloudy or not cloudy?</li>
+</ul>
+
+<p>Where the difference between this and multi-class classification is that with the former, a day can be labeled with multiple classes (e.g., rainy, not sunny, and cloudy), but for multi-class classification, only one would hold since being in one class implies not being in any other.</p>
+
+<h2 id="kullback-leibler-kl-divergence">Kullback-Leibler (KL) divergence</h2>
+
+<div class="justify-content-center flex">
+    <figure class="image">
+    <img src="/img/ce-kl/ohyeah.jpg" alt="Cross entropy and entropy come together to make KL divergence." />
+    <p><figcaption><i>Cross entropy and entropy come together to make KL divergence.</i></figcaption></p>
+    
+    </figure>
+</div>
+<p>KL divergence is just the difference between cross entropy and the true distribution’s entropy! 
+\(KL(p, q) = H(p, q) - H(p)\)
+Rearranging terms and using log properties, we get an alternate (but more commonly seen) formulation (note that the || just signifies “distance between” in statistics):
+\(KL(p || q) = H(p, q) - H(p) = - \sum_i p_i log_2(q_i) - \sum_i p_i log_2(p_i) = - \sum_i p_i (log_2(q_i) - log_2(p_i)) = \sum_i p_i log(\frac{p_i}{q_i})\)
+which is sometimes re-expressed as:
+\(E[log \frac{p_i}{q_i}] = E[log p_i - log q_i]\)</p>
+
+<p>Intuitively, it can be thought of as the expected number of extra bits needed to encode outcomes drawn from the true distribution \(p\) if we’re using distribution \(q\), or “the measure of inefficiency in using the probability distribution q to approximate the true probability distribution p” (thanks Wikipedia!).
+If we have a perfect prediction, i.e., our predicted distribution equals the true, then cross entropy equals the true distribution’s entropy, making KL divergence 0 (its minimum value).</p>
+
+<p>KL divergence is used with <strong>generative models</strong>, for example, variational autoencoders (VAEs) or generative adversarial networks (GANs). At a high level, generative models generate data that follows a similar distribution as the training data (for example, https://thesecatsdonotexist.com/). KL divergence then functions as a “distance” metric between predicted and reference distribution.</p>
+
+<p>See one of these awesome resources to read more:</p>
+<ul>
+  <li>https://www.jeremyjordan.me/variational-autoencoders/</li>
+  <li>https://wiseodd.github.io/techblog/2016/12/10/variational-autoencoder/</li>
+</ul>
+
+<h2 id="compare-n-contrast">Compare n Contrast</h2>
+
+<p>Because the \(H(p)\) term in KL divergence doesn’t change with the predicted distribution, minimizing cross entropy (the \(H(p, q)\) term) also minimizes KL divergence. So if it seems like we’re optimizing our model in the same way using both loss functions, does it even matter which one we use?</p>
+
+<p>KL divergence exactly equals cross entropy when the entropy of the true distribution is 0. This happens when there is no randomness in the distribution, i.e., one outcome/class has probability 1. Notice that this is precisely the case with how we train models, since we use a one-hot vector for the correct class. So when training a classifier for which you have some set of labelled training points you’d like your model to generalize over, the two are functionally equivalent, and you may as well just use cross entropy loss.</p>
+
+<p>Meanwhile, generative models try to output a probability distribution, so KL divergence makes more sense.</p>
+
+<p>So the bottom line: cross entropy is for training a classifier, KL divergence for a generator.</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Loss function</th>
+      <th>Use case(s)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Categorical cross entropy</td>
+      <td>- multi-class classification</td>
+    </tr>
+    <tr>
+      <td>Binary cross entropy</td>
+      <td>- binary classification <br /> - multi-label classification</td>
+    </tr>
+    <tr>
+      <td>KL divergence</td>
+      <td>- outputting a distribution</td>
+    </tr>
+  </tbody>
+</table>
+
+<h2 id="demo">Demo</h2>
+
+<p>Below is the cross entropy + KL divergence demo, which uses our recurring weather classification problem. Click <a href="/ce-demo/index.html" target="_blank">here</a> for a full-screen version if preferred.</p>
+
+<p>The blue text superimposed over these icons shows the true weather probability distribution, while the values shown below the classes in green are the predictions, which you can control using the sliders. As you adjust these values, you’ll see the 3 values at the bottom of the screen - entropy, cross entropy, and KL, respectively - change accordingly.</p>
+
+<p>To the left of the screen is a collapsible menu. Here you can add and remove classes, up to 10 and down to 1, and change the true distribution by randomizing their values (with either a totally random distribution, or a random one-hot vector), or by manually setting the values yourself.</p>
+
+<p>Note that this demo doesn’t leverage the “clipping” tricks mentioned in <a href="#categorical-cross-entropy">the section above</a>, so setting the predicted probability to 0 for a class with non-zero true probability will result in a cross-entropy (and correspondingly, KL) of infinity!</p>
+
+<iframe src="/ce-demo/index.html" title="Cross Entropy loss demo" width="100%" height="565px"></iframe>
+
+<h2 id="demo-walkthrough">Demo walkthrough</h2>
+
+<p>If you want some more guidance using the demo, click/tap the question mark button in the upper right corner, then “Play Tutorial”. This will walk you through the different things you can do with the demo and explain some of the things you see on the screen.
+This demo is optimized for desktop use, so if you’re reading this on a phone, I’d recommend playing with the demo on a desktop!</p>
+
+<p>Let’s walk through a simple example. Make sure you have 4 classes, then click “Set” to set the true distribution to the uniform distribution (all classes have the same probability). Then set all the sliders to the same value too. Because p = q exactly, you should see that cross entropy and entropy are exactly the same. This in turn brings KL divergence down to 0, its smallest possible value. Cross entropy is also at its lowest possible value for the given problem. 
+Now drag some sliders to change the predicted distribution to something not uniform. The farther you change it, the higher KL divergence and cross entropy will get.
+Now try putting your loss knowledge to the test. Toggle “Show true distribution” to hide the true distribution, then randomize it. Try to guess the true distribution by adjusting the sliders. That’s somewhat similar to how your model learns during training!</p>
+
+
+      
+      <div class="footer border-top border-gray-light mt-5 pt-3 text-right text-gray">
+        This site is open source. <a href="https://github.com/aimless-agents/aimless-agents.github.io/edit/gh-pages/_posts/ce-kl/2021-03-18-cekl.md">Improve this page</a>.
+      </div>
+      
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/anchor-js/4.1.0/anchor.min.js" integrity="sha256-lZaRhKri35AyJSypXXs4o6OPFTbTmUoltBbDCbdzegg=" crossorigin="anonymous"></script>
+    <script>anchors.add();</script>
+    
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+      ga('create', 'G-E2VY99JNJM', 'auto');
+      ga('send', 'pageview');
+    </script>
+    
+  </body>
+</html>
