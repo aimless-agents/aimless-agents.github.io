@@ -1,0 +1,13 @@
+{% assign ic_caps = include.icons | split: ", " %}
+<figure class="image" style="width: 80%; margin: auto;">
+    <div class="image-row">
+        {% for ic_cap in ic_caps %}
+            {% assign icon_caption = ic_cap | split: "|" %}
+            <div style="margin: 0 10px">
+                <i class="fa fa-{{icon_caption[0]}}" style="font-size: {{include.size}}px; color: {{icon_caption[2]}};"></i>
+                <p style="font-size: 20px; margin-top: 0px">{{icon_caption[1]}}</p>
+            </div>
+            <!-- <img class="image" src="{{ image }}" alt="{{ include.description }}"> -->
+        {% endfor %}
+    </div>
+</figure>

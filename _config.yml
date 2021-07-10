@@ -1,0 +1,63 @@
+#
+###################################
+# Site wide configuration
+####################################
+#
+title: aimless agents
+email:
+description: just 2 agents looking to learn
+url: https://aimless-agents.github.io
+baseurl: ""
+keywords: ["aimless-agents", "jekyll", "blog"]
+
+#
+###################################
+# Jekyll configuration
+####################################
+#
+timezone:          America/Toronto
+markdown:          kramdown
+highlighter:       rouge
+excerpt_separator: <!--more-->
+permalink:         /articles/:year-:month/:title
+
+kramdown:
+  auto_ids: true
+  footnote_nr: 1
+  entity_output: as_char
+  toc_levels: 1..6
+  enable_coderay: false
+
+#
+###################################
+# Site Owner configuration
+####################################
+#
+owner:
+  name: "aimless agents"
+  avatar: logo_blueorange.png
+  job: "just 2 agents looking to learn"
+  bio: "A casual blog brought to you by 2 ML enthusiasts."
+  email: 
+  disqus-shortname: aimless-agents
+  twitter: #username
+  facebook: #username
+  google:
+    plus: #username
+    analytics:
+    verify:
+    ad-client:
+    ad-slot:
+  bing-verify:
+  github: aimless-agents
+  stackoverflow: #123456/username   from a "http://stackoverflow.com/users/123456/username" link
+  linkedin: #username
+  instagram: #username
+
+# Google Analytics
+google_analytics: G-E2VY99JNJM
+
+plugins:
+  - jekyll-feed
+  - jekyll-sitemap
+  - jekyll-seo-tag
